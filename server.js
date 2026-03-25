@@ -30,6 +30,10 @@ app.get('/register', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
+    
+
+    
+
     console.log("Login username:", username);
     console.log("Login password:", password);
 
@@ -40,8 +44,26 @@ app.post('/register', (req, res) => {
     const {username, password} = req.body;
 
     if (username.length > 10){
-        return res.send
+        return res.redirect('/register?userError=Username must be less than 10 characters');
     }
+
+    if (!usernamePattern.test(username)){
+        return res.redirect('/register?userError=Username must contain only letters');
+    }
+
+    if (!passwordPattern.test(password)){
+        return res.redirect('/register?passError=Password must contain only letters and numbers');
+    }
+
+    if (password.length < 6 || password.length > 16){
+        return res.redirect('/register?passError=Password must be between 6 and 16 characters');
+    }
+
+    if (!/[A-Z]/.test(password) || !/[a-z]/.test(password)){
+        return res.redirect('/register?passError=Password must contain both uppercase and lowercase letters');
+    }
+
+    
 
     const stmt = db.prepare(`
         INSERT INTO users (username, password)
@@ -53,7 +75,17 @@ app.post('/register', (req, res) => {
     console.log("Username:", username);
     console.log("Password:", password);
 
-    res.send('got you!!!');
+    res.send(
+        `<html>
+        <head>
+            <title>Success</title>
+            <meta http-equiv="refresh" content="2;url=/" />
+        </head>
+        <body style="text-align:center; margin-top:200px;">
+            <h2>Registration successful!</h2>
+            <p>Redirecting to login page in 2 seconds...</p>
+        </body>
+        </html>`);
 
 })
 
