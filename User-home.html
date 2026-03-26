@@ -10,6 +10,15 @@
 
     </head>
     <body>
-        <h1>Hello, username</h1>
+        
+            <h1 id = "welcome-message"></h1>
+
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const username = params.get("username");
+            document.getElementById("welcome-message").textContent = "Welcome, " + username + "!";
+
+
+        </script>
     </body>
 </html>
