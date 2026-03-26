@@ -30,6 +30,19 @@ app.get('/register', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
+    const stmt = db.prepare(`
+        SELECT * FROM users
+        WHERE username = ? AND password = ?
+        `);
+    
+    const row = stmt.get(username, password);
+        if (row) {
+            res.redirect('/User-home?username=' + username);
+        }
+
+        else {
+            res.redirect('/?loginError=Invalid username or password');
+        }
     
 
     
@@ -37,7 +50,11 @@ app.post('/login', (req, res) => {
     console.log("Login username:", username);
     console.log("Login password:", password);
 
-    res.send("This is login. Not saving into database yet.");
+    
+});
+
+app.get('/User-home', (req, res) => {
+    res.sendFile(path.join(__dirname, 'User-home.html'));
 });
 
 app.post('/register', (req, res) => {
