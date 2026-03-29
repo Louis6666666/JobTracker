@@ -15,6 +15,34 @@ db.exec(`
     password TEXT NOT NULL
   )
 `);
+db.exec(`
+    CREATE TABLE IF NOT EXISTS jobs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        company TEXT NOT NULL,
+        position TEXT NOT NULL,
+        status TEXT NOT NULL,
+        date_applied TEXT NOT NULL
+    )
+`);
+
+app.post('/add-job', (req, res) => {
+    const {username, company, position, status, date_applied } = req.body;
+
+    const stmt = db.prepare(`
+        INSERT INTO jobs (username, company, position, status, date_applied)
+        VALUES (?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(username, company, position, status, date_applied);
+
+    res.redirect('/User-home?username=' + username);
+});
+
+app.get('/add-job', (req, res) => {
+    const username = req.query.username;
+    res.sendFile(path.join(__dirname, 'add-job.html'));
+})
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'home.html'));
@@ -105,6 +133,50 @@ app.post('/register', (req, res) => {
         </html>`);
 
 })
+
+app.get('/jobs', (req, res) => {
+    const username = req.query.username;
+
+    const stmt = db.prepare(`
+        SELECT * FROM jobs
+        WHERE username = ?
+    `);
+
+    const jobs = stmt.all(username);
+
+    res.json(jobs);
+});
+
+
+
+app.post('/update-job', express.json(), (req, res) => {
+    const { id, company, position, status, date_applied } = req.body;
+
+    const stmt = db.prepare(`
+        UPDATE jobs
+        SET company = ?, position = ?, status = ?, date_applied = ?
+        WHERE id = ?
+    `);
+
+    stmt.run(company, position, status, date_applied, id);
+
+    res.send("Updated");
+});
+
+app.post('/delete-job', express.json(), (req, res) => {
+    const { id } = req.body;
+
+    const stmt = db.prepare(`
+        DELETE FROM jobs
+        WHERE id = ?
+    `);
+
+    stmt.run(id);
+
+    res.send("Deleted");
+});
+
+
 
 app.listen(port, () => {
     console.log('http://localhost:'+port);
