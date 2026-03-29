@@ -6,10 +6,183 @@
             h1 {
                 text-align: center;
             }
+
+            .job-list {
+                 width: 80%;
+                 margin: 30px auto;
+                 background-color: white;
+                 padding: 20px;
+                 border-radius: 12px;
+                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #eaeaea;
+}
+      
+         .new-job-button {
+            text-align: right;
+            
+         }
+
         </style>
 
     </head>
     <body>
-        <h1>Hello, username</h1>
+        
+            <h1 id = "welcome-message"></h1>
+
+        
+        <div class = "job-list">
+            <h1>Job List</h1>
+
+            <table id="job-table">
+        <tr>
+            <th>Company</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th>Date Applied</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+         <tbody id="job-table-body">
+
+        </tbody>
+
+
+
+        
+    </table>
+        </div>
+    
+    
+
+
+        
+            <div class = "new-job-button">
+                <a id="create-job-btn" href="#">Create a new job</a>
+            </div>
+
+            <script>
+            const params = new URLSearchParams(window.location.search);
+            const username = params.get("username");
+            document.getElementById("welcome-message").textContent = "Welcome, " + username + "!";
+
+            document.getElementById("create-job-btn").href ="/add-job?username=" + username;
+
+            fetch("/jobs?username=" + username)
+        .then(response => response.json())
+        .then(jobs => {
+            const tableBody = document.getElementById("job-table-body");
+
+            jobs.forEach(job => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${job.company}</td>
+                    <td>${job.position}</td>
+                    <td>${job.status}</td>
+                    <td>${job.date_applied}</td>
+                    <td>
+                        <button onclick="editJob(${job.id}, this)">Edit</button>
+                        <button onclick="deleteJob(${job.id})">Delete</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        });
+
+
+        </script>
+        <script>
+function editJob(id, button) {
+    const row = button.parentElement.parentElement;
+    const cells = row.getElementsByTagName("td");
+
+    const company = cells[0].textContent;
+    const position = cells[1].textContent;
+    const status = cells[2].textContent;
+    const date = cells[3].textContent;
+
+    cells[0].innerHTML = `<input value="${company}">`;
+    cells[1].innerHTML = `<input value="${position}">`;
+    cells[2].innerHTML = `<input value="${status}">`;
+    cells[3].innerHTML = `<input value="${date}">`;
+
+    cells[4].innerHTML = `
+        <button onclick="saveJob(${id}, this)">Save</button>
+    `;
+}
+</script>
+
+<script>
+function saveJob(id, button) {
+    const row = button.parentElement.parentElement;
+    const inputs = row.getElementsByTagName("input");
+
+    const company = inputs[0].value;
+    const position = inputs[1].value;
+    const status = inputs[2].value;
+    const date = inputs[3].value;
+
+    fetch("/update-job", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id: id,
+            company: company,
+            position: position,
+            status: status,
+            date_applied: date
+        })
+    })
+    .then(response => response.text())
+    .then(() => {
+        location.reload();
+    });
+}
+</script>
+
+
+
+<script>
+function deleteJob(id) {
+    if (!confirm("Are you sure you want to delete this job?")) {
+        return;
+    }
+
+    fetch("/delete-job", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: id })
+    })
+    .then(response => response.text())
+    .then(() => {
+        location.reload();
+    });
+}
+</script>
+
+        
+
+        
+        
     </body>
 </html>

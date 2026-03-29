@@ -19,6 +19,11 @@
                 text-align: center;
                 margin-top: 20px;
             }
+
+            .login-error {
+                text-align: center;
+                margin-top: 1px;
+            }
                 
             </style>
     </head>
@@ -31,6 +36,7 @@
             <input type="text" name = "username" required><br><br>
             <label>Password:</label>
             <input type="password" name = "password" required><br><br>
+            <p class = "login-error" id = "login-Error"></p>
             <div class = "center">
                 <button class = "login-button" type = "submit">Login Now!</button>
             </div>
@@ -40,6 +46,14 @@
                 <button type = "submit">Don't have an account? Register here!</button>
             </div>
         </form>
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const loginError = params.get("loginError");
+
+            if (loginError) {
+                document.getElementById("login-Error").textContent = loginError;
+            }
+        </script>
         
         
         

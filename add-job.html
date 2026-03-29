@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .job-list {
+                 width: 80%;
+                 margin: 30px auto;
+                 background-color: white;
+                 padding: 20px;
+                 border-radius: 12px;
+                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #eaeaea;
+}
+        </style>
+
+    </head>
+    <body>
+        <form action = "/add-job" method = "post">
+        <div class = "job-list">
+            <h1>Add a new job</h1>
+
+            <table id="job-table">
+        <tr>
+            <th>Company</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th>Date Applied</th>
+        </tr>
+        
+        
+            <tr>
+                <td><input type="text" name = "company" required><br><br></td>
+                <td><input type="text" name = "position" required><br><br></td>
+                <td><input type="text" name = "status" required><br><br></td>
+                <td><input type="date" name = "date_applied" required><br><br></td>
+            </tr>
+            
+
+        
+        
+    </table>
+    <button type = "submit">
+                Add Job
+    </button>
+    <input type="hidden" name="username" id="username-hidden">
+    </div>
+    </form>
+    <script>
+            const params = new URLSearchParams(window.location.search);
+            const username = params.get("username");
+            document.getElementById("username-hidden").value = username;
+    </script>
+        
+    </body>
+</html>

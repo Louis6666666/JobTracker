@@ -19,6 +19,12 @@
                 text-align: center;
                 margin-top: 20px;
             }
+
+            .register-error {
+                color : red;
+                text-align: center;
+                margin-top: 1px; 
+            }
                 
             </style>
     </head>
@@ -28,12 +34,29 @@
         <form action = "/register" method = "post">
             <label>Username:</label>
             <input type="text" name = "username" required><br><br>
+            <p class = "register-error" id = "UsernameError"></p>
             <label>Password:</label>
             <input type="password" name = "password" required><br><br>
+            <p class = "register-error" id = "PasswordError"></p>
             <div class = "center">
                 <button class = "login-button" type = "submit">Register Now!</button>
             </div>
         </form>
+
+        <script>
+            const params = new URLSearchParams(window.location.search);
+
+            const userError = params.get("userError");
+            const passError = params.get("passError");
+
+            if (userError) {
+                document.getElementById("UsernameError").textContent = userError;
+            }
+
+            if (passError) {
+                document.getElementById("PasswordError").textContent = passError;
+            }
+        </script>
         
         
         
