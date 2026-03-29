@@ -19,6 +19,6 @@ A full-stack web application that allows users to track job applications.
 - JavaScript
 
 ## How to Run
-npm install
-npm run dev
+npm install, 
+npm run dev, 
 Open http://localhost:3000
